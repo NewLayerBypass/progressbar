@@ -40,7 +40,7 @@ fn sleep(ms: u64) void {
     std.time.sleep(std.time.ns_per_ms * ms);
 }
 
-pub const Progrezzbar = struct {
+pub const ProgressBar = struct {
     allocator: Allocator,
     width: u32,
     character: string = "█",
@@ -57,7 +57,7 @@ pub const Progrezzbar = struct {
         end_message: ?string,
         show_percentage: bool,
         color: ?string,
-    ) Progrezzbar {
+    ) ProgressBar {
         return .{
             .allocator = allocator,
             .width = width,
@@ -69,7 +69,7 @@ pub const Progrezzbar = struct {
         };
     }
 
-    pub fn run(self: *Progrezzbar) !void {
+    pub fn run(self: *ProgressBar) !void {
         var _self = self.*;
         const stdout = std.io.getStdOut();
 
@@ -99,7 +99,7 @@ pub const Progrezzbar = struct {
         }
     }
 
-    fn update(self: Progrezzbar, stdout: File, chars: []string) !void {
+    fn update(self: ProgressBar, stdout: File, chars: []string) !void {
         try stdout.writer().print("\x1b[A\x1b[K{s}", .{Color.Clear});
 
         if (self.message) |message| {
@@ -110,7 +110,7 @@ pub const Progrezzbar = struct {
         try stdout.writer().print("{s}\n", .{Color.Clear});
     }
 
-    fn updateWithPercent(self: Progrezzbar, stdout: File, chars: []string, index: usize) !void {
+    fn updateWithPercent(self: ProgressBar, stdout: File, chars: []string, index: usize) !void {
         const percent = @as(f32, @floatFromInt(index)) / @as(f32, @floatFromInt(self.width)) * 100;
 
         try stdout.writer().print("\x1b[A\x1b[K{s}", .{Color.Clear});
@@ -125,48 +125,48 @@ pub const Progrezzbar = struct {
 
 test "no percent, no message, no end message" {
     const allocator = std.heap.page_allocator;
-    var p = Progrezzbar.init(allocator, 25, null, null, null, false, Color.Clear);
+    var p = ProgressBar.init(allocator, 25, null, null, null, false, Color.Clear);
     try p.run();
 }
 
 test "no percent, no message, end message" {
     const allocator = std.heap.page_allocator;
-    var p = Progrezzbar.init(allocator, 25, null, null, "End Message", false, Color.Clear);
+    var p = ProgressBar.init(allocator, 25, null, null, "End Message", false, Color.Clear);
     try p.run();
 }
 
 test "no percent, message, end message" {
     const allocator = std.heap.page_allocator;
-    var p = Progrezzbar.init(allocator, 25, null, "Test Message", "End Message", false, Color.Clear);
+    var p = ProgressBar.init(allocator, 25, null, "Test Message", "End Message", false, Color.Clear);
     try p.run();
 }
 
 test "percent, no message, no end message" {
     const allocator = std.heap.page_allocator;
-    var p = Progrezzbar.init(allocator, 25, null, null, null, true, Color.Clear);
+    var p = ProgressBar.init(allocator, 25, null, null, null, true, Color.Clear);
     try p.run();
 }
 
 test "percent, no message, end message" {
     const allocator = std.heap.page_allocator;
-    var p = Progrezzbar.init(allocator, 25, null, null, "End Message", true, Color.Clear);
+    var p = ProgressBar.init(allocator, 25, null, null, "End Message", true, Color.Clear);
     try p.run();
 }
 
 test "percent, message, end message" {
     const allocator = std.heap.page_allocator;
-    var p = Progrezzbar.init(allocator, 25, null, "Test Message", "End Message", true, Color.Clear);
+    var p = ProgressBar.init(allocator, 25, null, "Test Message", "End Message", true, Color.Clear);
     try p.run();
 }
 
 test "custom char, no percent" {
     const allocator = std.heap.page_allocator;
-    var p = Progrezzbar.init(allocator, 25, "#", "Test Message", "End Message", false, Color.Clear);
+    var p = ProgressBar.init(allocator, 25, "#", "Test Message", "End Message", false, Color.Clear);
     try p.run();
 }
 
 test "custom char, percent" {
     const allocator = std.heap.page_allocator;
-    var p = Progrezzbar.init(allocator, 25, "#", "Test Message", "End Message", true, Color.Clear);
+    var p = ProgressBar.init(allocator, 25, "#", "Test Message", "End Message", true, Color.Clear);
     try p.run();
 }
