@@ -5,8 +5,8 @@ pub fn build(b: *std.Build) void {
     const optimize = b.standardOptimizeOption(.{});
 
     const lib = b.addStaticLibrary(.{
-        .name = "progrezzbar",
-        .root_source_file = .{ .path = "src/progrezzbar.zig" }, // Library source file
+        .name = "progressbar",
+        .root_source_file = .{ .path = "src/progressbar.zig" }, // Library source file
         .target = target,
         .optimize = optimize,
     });
@@ -14,7 +14,7 @@ pub fn build(b: *std.Build) void {
     b.installArtifact(lib);
 
     const tests = b.addTest(.{
-        .name = "progrezzbar_tests",
+        .name = "progressbar_tests",
         .root_source_file = .{ .path = "src/tests.zig" }, // Test source file
         .deps = @dependencies([lib]), // Link tests with the library
         .target = target,
